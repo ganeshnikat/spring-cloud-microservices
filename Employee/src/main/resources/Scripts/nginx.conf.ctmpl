@@ -1,0 +1,30 @@
+#user  nobody;
+worker_processes  auto;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+http {
+	{{range services}} {{$name := .Name}} {{$service := service .Name}}
+	upstream {{$name}} {
+           #ip_hash; #to Enable ip_hash alogirthm
+           #least_conn;  #to enable least connection algorithm
+	  {{range $service}}server {{.Address}}:{{.Port}};
+	  {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+	} {{end}}
+
+	server {
+	  listen 80 default_server;
+	  {{range services}} {{$name := .Name}}
+	  location /{{$name}} {
+		proxy_pass http://{{$name}}/{{$name}};
+	  }
+	{{end}}
+	}
+}
