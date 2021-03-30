@@ -1,4 +1,4 @@
-#Dynamic Load balancing with Nginx ,Consul and Consul-Template
+# Dynamic Load balancing with Nginx ,Consul and Consul-Template
 
 **Step 1:**
 
